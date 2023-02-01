@@ -1,0 +1,13 @@
+===========*****    STEPS  *******================
+1. Create a directory and initialize a Node project using the NPM.
+     -->  $ mkdir mysqlexperiment && cd mysqlexperiment
+     -->  $ npm init --y
+
+2. Install the mysql node module using the NPM.
+    --> npm install --save mysql
+
+3. Create an app.js file & Connect with MySQL
+
+4 . run the code using --> node app.js
+
+5. install express 
