@@ -8,7 +8,7 @@ var users = require('./routes/users');
 //2. we are initializing the app using the express
 var app = express();
 
-app.use('./users', users)
+app.use('/users', users)
 
 // 3. using the app we are configuring  the route of 'GET' method and path is '/getUsers'
 // http methods --> GET, POST , PUT, PATCH, DELETE
@@ -31,41 +31,6 @@ app.get('/get-user-details', (req, res)=>{
     }
     res.send(userObj);
 });
-
-// CRUD - user
-app.post('/create-users', (req, res)=>{
-   res.send("List of users!");
-});
-app.put('/update-users', (req, res)=>{
-   res.send("List of users!");
-});
-app.get('/read-all-users', (req, res)=>{
-   res.send("List of users!");
-});
-app.get('/get-user-details', (req, res)=>{
-    var userObj = {
-        id:1,
-        name:"ABC",
-        address:"XYZ",
-        status:true
-    }
-    res.send(userObj);
-});
-app.delete('/delete-users', (req, res)=>{
-    res.send("List of users!");
- });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
