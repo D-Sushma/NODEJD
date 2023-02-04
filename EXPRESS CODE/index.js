@@ -1,5 +1,10 @@
 //1. importing the Express js module into our application
 var express = require("express");
+var cors = require("cors");
+
+const corsOptions = {
+    origin: "http://127.0.0.1:5173",
+  };
 
 // IMPORT==============
 var users = require('./routes/users');
@@ -11,6 +16,7 @@ var con = require('./properties') //step #1
 // -------END-----------------------------------------------------
 //2. we are initializing the app using the express
 var app = express();
+app.use(cors(corsOptions));
 
 app.use('/users', users);
 app.use('/products', products);
