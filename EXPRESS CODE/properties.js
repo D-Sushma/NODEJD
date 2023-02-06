@@ -6,7 +6,8 @@ var con = mysql.createConnection({
   host: "localhost",  
   user: "root",  
   password: "" ,
-  database:"mydb" 
+  database:"sarmicrosystems_q2sgeneral"
+  // database:"mydb" 
 });  
 // con.connect(function(err) {  
 //     if (err) throw err;  
