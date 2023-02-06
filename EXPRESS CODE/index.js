@@ -3,7 +3,9 @@ var express = require("express");
 var cors = require("cors");
 
 const corsOptions = {
-    origin: "http://127.0.0.1:5173",
+    // origin: "http://127.0.0.1:3000",
+    // Access_Control_Allow_Origin:"http://127.0.0.1:3000",
+    Access_Control_Allow_Origin:"*",
   };
 
 // IMPORT==============
@@ -26,8 +28,9 @@ con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
 });
-app.get('/all', (req, res) => {
-    let sqlQuery = "SELECT * FROM employee";
+app.get('/usertabledetails', (req, res) => {
+    // let sqlQuery = "SELECT * FROM employee";
+    let sqlQuery = "SELECT * FROM quiz_regdetails";
     let query = con.query(sqlQuery, (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -35,6 +38,19 @@ app.get('/all', (req, res) => {
     });
 });
 
+app.get('/memberregistration', (req,res)=>{
+    // console.log("member registration");
+    let query = "SELECT * FROM competetion_registration";
+    con.query(query, (err, results)=>{
+        if(err) {console.log(err);}
+        else{
+            // console.log(results);
+            res.send(apiResponse(results));
+        }
+    })
+})
+
+/**************************************************************/
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
     // let sqlQuery = "SELECT * FROM employee";
