@@ -49,6 +49,17 @@ app.get('/memberregistration', (req,res)=>{
         }
     })
 })
+// JOIN 
+app.get('/join', (req, res)=>{
+    // console.log("put inner join");
+    // let query = "SELECT quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails WHERE competetion_registration.userid = quiz_regdetails.id";
+    let query = "SELECT quiz_regdetails.name from competetion_registration INNER JOIN quiz_regdetails ON competetion_registration.userid = quiz_regdetails.id";
+    con.query(query, (err, results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    }) 
+})
 
 /**************************************************************/
 app.get('/single/item/:id', (req, res) => {
