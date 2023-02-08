@@ -13,7 +13,9 @@ var users = require('./routes/users');
 var products = require('./routes/products');
 var orders = require('./routes/orders');
 // ------START-------------------------------------
-var con = require('./properties') //step #1
+var con = require('./properties'); //step #1
+const { query } = require("express");
+const { connect } = require("./properties");
 
 // -------END-----------------------------------------------------
 //2. we are initializing the app using the express
@@ -49,7 +51,27 @@ app.get('/memberregistration', (req,res)=>{
         }
     })
 })
+// JOIN 
+app.get('/join', (req, res)=>{
+    // console.log("put inner join");
+    // let query = "SELECT quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails WHERE competetion_registration.userid = quiz_regdetails.id";
+    let query = "SELECT competetion_registration.id, competetion_registration.subject, competetion_registration.subscription, competetion_registration.status, competetion_registration.updated_at, competetion_registration.created_at, competetion_registration.expiry_date, quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails ON competetion_registration.userid = quiz_regdetails.id";
+    con.query(query, (err, results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    }) 
+})
 
+app.get('/competitionlistdetails', (req,res)=>{
+    console.log("Competition List");
+    let query = "SELECT * FROM competition_new_initiate";
+    con.query(query, (err,results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
 /**************************************************************/
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
