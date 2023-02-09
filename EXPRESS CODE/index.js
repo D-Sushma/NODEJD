@@ -65,7 +65,31 @@ app.get('/join', (req, res)=>{
 
 app.get('/competitionlistdetails', (req,res)=>{
     console.log("Competition List");
-    let query = "SELECT * FROM competition_new_initiate";
+    // let query = "SELECT * FROM competition_new_initiate";
+    /**** ACCESS SINGLE COLUMN IF NOT DEFINE SHORT NAME***/
+    // let  query = "SELECT competition_new_initiate.id,competition_new_initiate.competition_group_id,competition_new_initiate.subject_id,competition_new_initiate.p1,competition_new_initiate.p2, competition_new_initiate.test_date,competition_new_initiate.subscription_id,competition_new_initiate.slot_start, competition_new_initiate.slot_end, quiz_regdetails.name,quiz_regdetails.lname from competition_new_initiate INNER JOIN quiz_regdetails ON competition_new_initiate.p1 = quiz_regdetails.id"; 
+    /* ******ACCESS MULTIPLE COLUMN WITH DEFINE SHORT NAME****** */
+    let query = "SELECT c.*, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name from competition_new_initiate c INNER JOIN quiz_regdetails q1 ON c.p1 = q1.id INNER JOIN quiz_regdetails q2 ON c.p2 = q2.id";
+    con.query(query, (err,results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
+
+app.get('/competitiongroupdetails', (req,res)=>{
+    console.log("Competition group");
+    let query = "SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id"; 
+    con.query(query, (err,results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
+
+app.get('/moredetailstable',(req,res)=>{
+    // console.log("more details table");
+    let query = "SELECT * FROM competition_new_initiate WHERE competition_group_id = 'CG_2022-10-14_13_1_2_5_1'"
     con.query(query, (err,results)=>{
         if(err) throw err;
         console.log(results);
