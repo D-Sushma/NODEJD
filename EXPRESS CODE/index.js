@@ -79,7 +79,9 @@ app.get('/competitionlistdetails', (req,res)=>{
 
 app.get('/competitiongroupdetails', (req,res)=>{
     console.log("Competition group");
-    let query = "SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id"; 
+    // let query = "SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id";
+    // let query = "SELECT competition_new_initiate.id,competition_new_initiate.competition_group_id, competition_new_initiate.winner_id,competition_new_initiate.test_date, COUNT(competition_group_id) as grp_cnt, CONCAT(quiz_regdetails.name,' ',quiz_regdetails.lname) AS winner_name FROM competition_new_initiate INNER JOIN quiz_regdetails ON competition_new_initiate.winner_id = quiz_regdetails.id GROUP BY competition_group_id";
+    let query = "SELECT c.id,c.competition_group_id, c.winner_id,c.test_date, COUNT(competition_group_id) as grp_cnt, CONCAT(q.name,' ',q.lname) AS winner_name FROM competition_new_initiate c INNER JOIN quiz_regdetails q ON c.winner_id = q.id GROUP BY competition_group_id";
     con.query(query, (err,results)=>{
         if(err) throw err;
         console.log(results);
@@ -90,12 +92,24 @@ app.get('/competitiongroupdetails', (req,res)=>{
 app.get('/moredetailstable',(req,res)=>{
     // console.log("more details table");
     let query = "SELECT * FROM competition_new_initiate WHERE competition_group_id = 'CG_2022-10-14_13_1_2_5_1'"
+    // let query = "SELECT * FROM competition_new_initiate";
     con.query(query, (err,results)=>{
         if(err) throw err;
         console.log(results);
         res.send(apiResponse(results));
     })
 })
+app.get('/moredetailstable1',(req,res)=>{
+    // console.log("more details table");
+    let query = "SELECT competition_group_id FROM competition_new_initiate WHERE competition_group_id = 'CG_2023-01-07_13_1_0_6_1'"
+    con.query(query, (err,results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
+/**************************************************************/
+// SELECT * FROM `quiz_regdetails` where id in (SELECT winner_id from competition_new_initiate);
 /**************************************************************/
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
