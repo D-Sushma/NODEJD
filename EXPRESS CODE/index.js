@@ -99,9 +99,11 @@ app.get('/moredetailstable',(req,res)=>{
         res.send(apiResponse(results));
     })
 })
-app.get('/moredetailstable1',(req,res)=>{
+
+app.get('/moredetailstable1/:cgId',(req,res)=>{
     // console.log("more details table");
-    let query = "SELECT competition_group_id FROM competition_new_initiate WHERE competition_group_id = 'CG_2023-01-07_13_1_0_6_1'"
+    let cgId = req.params.cgId;
+    let query = `SELECT * FROM competition_new_initiate WHERE competition_group_id = "${cgId}"`;
     con.query(query, (err,results)=>{
         if(err) throw err;
         console.log(results);
