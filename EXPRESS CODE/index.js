@@ -79,9 +79,10 @@ app.get('/competitionlistdetails', (req, res) => {
 
 app.get('/competitiongroupdetails', (req, res) => {
     console.log("Competition group");
-    let query = "SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id";
+    // let query = "SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id";
     //  let query = "SELECT competition_new_initiate.id,competition_new_initiate.competition_group_id, competition_new_initiate.winner_id,competition_new_initiate.test_date, COUNT(competition_group_id) AS grp_cnt, CONCAT(quiz_regdetails.name,' ',quiz_regdetails.lname) AS winner_name FROM competition_new_initiate INNER JOIN quiz_regdetails ON competition_new_initiate.winner_id = quiz_regdetails.id GROUP BY competition_group_id";
     // let query = "SELECT c.id,c.competition_group_id, c.winner_id,c.test_date, COUNT(competition_group_id) AS grp_cnt, CONCAT(q.name,' ',q.lname) AS winner_name FROM (competition_new_initiate c INNER JOIN quiz_regdetails q ON c.winner_id = q.id) GROUP BY competition_group_id";
+    let query = "SELECT t1.id,t1.competition_group_id, t1.winner_id,t1.test_date,t1.grp_cnt,CONCAT(q.name,' ',q.lname) AS winner_name from (SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id) AS t1 LEFT JOIN quiz_regdetails q ON t1.winner_id = q.id";
     con.query(query, (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -94,7 +95,11 @@ app.get('/moredetailstable/:id', (req, res) => {
     console.log(req.params.id);
     let cgId = req.params.id;
     // let query = "SELECT * FROM competition_new_initiate WHERE competition_group_id = 'CG_2022-10-14_13_1_2_5_1'"
-    let query = `SELECT * FROM competition_new_initiate WHERE competition_group_id = "${cgId}"`;
+    // let query = `SELECT * FROM competition_new_initiate WHERE competition_group_id = "${cgId}"`;
+    // ===========wrong=====
+    // let query = `SELECT c.*, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM competition_new_initiate c INNER JOIN quiz_regdetails q1 ON c.p1 = q1.id INNER JOIN quiz_regdetails q2 ON c.p2 = q2.id WHERE competition_group_id = "${cgId}"`;
+    // ==========right=======
+    let query = `SELECT t1.*, q1.id AS q1_id, q2.id AS q2_id, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM (SELECT * FROM competition_new_initiate) AS t1 LEFT JOIN quiz_regdetails q1 ON t1.p1 = q1.id LEFT JOIN  quiz_regdetails q2 ON t1.p2 = q2.id WHERE t1.competition_group_id = "${cgId}"`;
     con.query(query, (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -114,6 +119,9 @@ app.get('/moredetailstable1/:cgId',(req,res)=>{
         res.send(apiResponse(results));
     })
 })
+/**************************************************************/
+// some query for filter section,
+// SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
 /**************************************************************/
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
