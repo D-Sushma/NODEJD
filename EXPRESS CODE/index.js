@@ -106,7 +106,7 @@ app.get('/moredetailstable/:id', (req, res) => {
         res.send(apiResponse(results));
     })
 });
-
+// PASS DYNAMIC DATA----------------------------->>>>>>>>>>>>
 app.get('/moredetailstable1/:cgId',(req,res)=>{
     // console.log("more details table");
     // let query = "SELECT competition_group_id FROM competition_new_initiate WHERE competition_group_id = 'CG_2023-01-07_13_1_0_6_1'"
@@ -119,9 +119,31 @@ app.get('/moredetailstable1/:cgId',(req,res)=>{
         res.send(apiResponse(results));
     })
 })
+
+app.get('/subjectrecord', (req,res)=>{
+    console.log("record basis of subject in filter section");
+    // let query = "SELECT *, COUNT(expiry_date) AS subject_record FROM `competetion_registration` WHERE subject=13";
+    let query = "SELECT c1.*, c2.*, COUNT(c2.expiry_date) AS c2_subject_record FROM (SELECT *, COUNT(expiry_date) AS subject_record FROM `competetion_registration` WHERE subject = 13) AS c1 INNER JOIN `competetion_registration` c2 ON  c2.id WHERE c2.subject = 6";
+    con.query(query, (err,results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
+
+app.get('/totalrecord', (req,res) =>{
+    console.log("total record field inside filter section");
+    let query = "SELECT *,COUNT(subject) AS total_record FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6";
+    con.query(query, (err, results)=>{
+        if(err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
 /**************************************************************/
-// some query for filter section,
+// some query for filter section, --> for total reg field
 // SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
+// SELECT * FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6
 /**************************************************************/
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
