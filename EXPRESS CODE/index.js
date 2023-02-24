@@ -47,7 +47,16 @@ app.get('/memberregistration', (req, res) => {
         if (err) { console.log(err); }
         else {
             // console.log(results);
-            res.send(apiResponse(results));
+            let eDate = [];
+    for (let index = 0; index < results.length; index++) {
+        const element = results[index].expiry_date;
+    eDate.push({
+        label:element,value:element
+    });
+        console.log('element', element);
+    }
+    console.log('eDate', eDate)
+            res.send(apiResponse({results, eDate : eDate}));
         }
     })
 })
