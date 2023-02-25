@@ -51,7 +51,7 @@ app.get('/memberregistration', (req, res) => {
     for (let index = 0; index < results.length; index++) {
         const element = results[index].expiry_date;
     eDate.push({
-        label:element,value:element
+        label:element,value:index
     });
         console.log('element', element);
     }
