@@ -1,6 +1,8 @@
 //1. importing the Express js module into our application
 var express = require("express");
 var cors = require("cors");
+// =======for formatting date
+var moment = require('moment');
 
 const corsOptions = {
     // origin: "http://127.0.0.1:3000",
@@ -42,26 +44,33 @@ app.get('/usertabledetails', (req, res) => {
 
 app.get('/memberregistration', (req, res) => {
     // console.log("member registration");
-    let query = "SELECT * FROM competetion_registration";
+    let query = "SELECT * FROM competetion_registration GROUP BY expiry_date";
     con.query(query, (err, results) => {
         if (err) { console.log(err); }
         else {
             // console.log(results);
             let eDate = [];
-    for (let index = 0; index < results.length; index++) {
-        const element = results[index].expiry_date;
-        // let newEle = "2023-02-01"+" to "+element;
-    eDate.push({
-        label:element,value:element
-        // label:newEle,value:newEle
-    });
-        console.log('element', element);
-    }
-    console.log('eDate', eDate)
-            res.send(apiResponse({results, eDate : eDate}));
+            for (let index = 0; index < results.length; index++) {
+                const element = results[index].expiry_date;
+
+                // let newEle =moment(element).subtract(6,'days').format('DD-MM-YYYY') +"TO"+ moment(element).format('DD-MM-YYYY');
+                eDate.push({
+                    label: moment(element).subtract(6,'days').format('DD-MM-YYYY')+" "+"TO"+" "+moment(element).format('DD-MM-YYYY'), value: element
+                    // label: element, value: element
+                    // label:newEle ,value:newEle
+                });
+                console.log('element', element);
+            }
+            console.log('eDate', eDate)
+            console.log('results', results)
+            res.send(apiResponse({ results: results, eDate: eDate }));
         }
     })
 })
+// ================== TOTAL COMPETITION==============
+// SELECT * FROM `competition_new_initiate` WHERE subject_id=13 AND test_date>='2022-10-10' AND test_date<'2022-10-16'
+// ===============TOTAL REGISTRATION================
+// SELECT * FROM `competetion_registration` WHERE subject=13 AND expiry_date='2023-02-12' 
 // JOIN 
 app.get('/join', (req, res) => {
     // console.log("put inner join");
@@ -118,35 +127,35 @@ app.get('/moredetailstable/:id', (req, res) => {
     })
 });
 // PASS DYNAMIC DATA----------------------------->>>>>>>>>>>>
-app.get('/moredetailstable1/:cgId',(req,res)=>{
+app.get('/moredetailstable1/:cgId', (req, res) => {
     // console.log("more details table");
     // let query = "SELECT competition_group_id FROM competition_new_initiate WHERE competition_group_id = 'CG_2023-01-07_13_1_0_6_1'"
     // let query = "SELECT * FROM competition_new_initiate";
     let cgId = req.params.cgId;
     let query = `SELECT * FROM competition_new_initiate WHERE competition_group_id = "${cgId}"`;
-    con.query(query, (err,results)=>{
-        if(err) throw err;
+    con.query(query, (err, results) => {
+        if (err) throw err;
         console.log(results);
         res.send(apiResponse(results));
     })
 })
 
-app.get('/subjectrecord', (req,res)=>{
+app.get('/subjectrecord', (req, res) => {
     console.log("record basis of subject in filter section");
     // let query = "SELECT *, COUNT(expiry_date) AS subject_record FROM `competetion_registration` WHERE subject=13";
     let query = "SELECT c1.*, c2.*, COUNT(c2.expiry_date) AS c2_subject_record FROM (SELECT *, COUNT(expiry_date) AS subject_record FROM `competetion_registration` WHERE subject = 13) AS c1 INNER JOIN `competetion_registration` c2 ON  c2.id WHERE c2.subject = 6";
-    con.query(query, (err,results)=>{
-        if(err) throw err;
+    con.query(query, (err, results) => {
+        if (err) throw err;
         console.log(results);
         res.send(apiResponse(results));
     })
 })
 
-app.get('/totalrecord', (req,res) =>{
+app.get('/totalrecord', (req, res) => {
     console.log("total record field inside filter section");
     let query = "SELECT *,COUNT(subject) AS total_record FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6";
-    con.query(query, (err, results)=>{
-        if(err) throw err;
+    con.query(query, (err, results) => {
+        if (err) throw err;
         console.log(results);
         res.send(apiResponse(results));
     })
