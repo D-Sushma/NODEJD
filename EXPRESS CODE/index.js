@@ -67,10 +67,7 @@ app.get('/memberregistration', (req, res) => {
         }
     })
 })
-// ================== TOTAL COMPETITION==============
-// SELECT * FROM `competition_new_initiate` WHERE subject_id=13 AND test_date>='2022-10-10' AND test_date<'2022-10-16'
-// ===============TOTAL REGISTRATION================
-// SELECT * FROM `competetion_registration` WHERE subject=13 AND expiry_date='2023-02-12' 
+ 
 // JOIN 
 app.get('/join', (req, res) => {
     // console.log("put inner join");
@@ -152,8 +149,13 @@ app.get('/subjectrecord', (req, res) => {
 })
 
 app.get('/totalrecord', (req, res) => {
-    console.log("total record field inside filter section");
-    let query = "SELECT *,COUNT(subject) AS total_record FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6";
+    console.log(req.params.id);
+    let cgId = req.params.id;
+    // console.log("total record field inside filter section");
+    let query = `SELECT * FROM competetion_registration WHERE expiry_date = "${trId}"`;
+    // let query = "SELECT *,COUNT(subject) AS total_record FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6";
+    // let query = "SELECT * FROM `competetion_registration` WHERE subject=13 AND expiry_date='2023-02-12'";
+    // let query = "SELECT COUNT(subject) AS tcount FROM `competetion_registration` GROUP BY subject=13 AND expiry_date='2023-02-12'";
     con.query(query, (err, results) => {
         if (err) throw err;
         console.log(results);
@@ -165,6 +167,10 @@ app.get('/totalrecord', (req, res) => {
 // SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
 // SELECT * FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6
 /**************************************************************/
+// ================== TOTAL COMPETITION==============
+// SELECT * FROM `competition_new_initiate` WHERE subject_id=13 AND test_date>='2022-10-10' AND test_date<'2022-10-16'
+// ===============TOTAL REGISTRATION================
+// SELECT * FROM `competetion_registration` WHERE subject=13 AND expiry_date='2023-02-12'
 app.get('/single/item/:id', (req, res) => {
     let sqlQuery = "SELECT * FROM employee WHERE id=" + req.params.id;
     // let sqlQuery = "SELECT * FROM employee";
