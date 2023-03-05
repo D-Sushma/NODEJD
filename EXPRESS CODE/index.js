@@ -67,7 +67,16 @@ app.get('/memberregistration', (req, res) => {
         }
     })
 })
- 
+app.get('/registration/:date', (req, res) => {
+    let cgId = req.params.date;
+    let query = `SELECT * FROM 'competetion_registration' WHERE (expiry_date=${date} and subject = 13)`;
+    con.query(query, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+})
+
 // JOIN 
 app.get('/join', (req, res) => {
     // console.log("put inner join");
