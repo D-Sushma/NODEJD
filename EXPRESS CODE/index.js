@@ -67,9 +67,20 @@ app.get('/memberregistration', (req, res) => {
         }
     })
 })
-app.get('/registration/:date', (req, res) => {
-    let cgId = req.params.date;
-    let query = `SELECT * FROM 'competetion_registration' WHERE (expiry_date=${date} and subject = 13)`;
+app.get('/registration', (req, res) => {
+    let query = "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
+    con.query(query, (err, results) => {
+        if (err) throw err;
+        console.log(results);
+        res.send(apiResponse(results));
+    })
+}) 
+
+app.get('/registrationUser/:tRecord', (req, res) => {
+    console.log('req.params.tRecord', req.params.tRecord)
+    let tr = req.params.tRecord;
+    // let query = "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
+    let query = `SELECT * FROM competetion_registration WHERE (expiry_date='${tr}' and subject = 13)`;
     con.query(query, (err, results) => {
         if (err) throw err;
         console.log(results);
