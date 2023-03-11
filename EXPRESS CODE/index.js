@@ -42,36 +42,92 @@ app.get("/usertabledetails", (req, res) => {
   });
 });
 
+// app.get("/memberregistration", (req, res) => {
+//   // console.log("member registration");
+//   // let query = "SELECT * FROM competetion_registration GROUP BY expiry_date";
+//   let query =
+//     "SELECT *, COUNT(expiry_date) as count FROM `competetion_registration` GROUP BY expiry_date";
+//   con.query(query, (err, results) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       // console.log(results);
+//       let eDate = [];
+//       for (let index = 0; index < results.length; index++) {
+//         const expiryDate = results[index].expiry_date;
+//         const count = results[index].count;
+//         const subjectId = results[index].subject
+//         const date = `${moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY")} TO ${moment(expiryDate).format("DD-MM-YYYY")}`;
+//         const details = { subjectId: subjectId, date: moment(expiryDate).format("DD-MM-YYYY"), count: count }
+//         eDate.push({
+//           label: date,
+//           value: expiryDate,
+//           details: details,
+//         });
+//         console.log("expiryDate", expiryDate);
+//       }
+//       console.log("eDate", eDate);
+//       console.log("results", results);
+//       res.send(apiResponse({ results: results, eDate: eDate }));
+//     }
+//   });
+// });
 app.get("/memberregistration", (req, res) => {
-  // console.log("member registration");
-  // let query = "SELECT * FROM competetion_registration GROUP BY expiry_date";
-  let query =
-    "SELECT *, COUNT(expiry_date) as count FROM `competetion_registration` GROUP BY expiry_date;";
-  con.query(query, (err, results) => {
+  var first_res = [];
+  var second_res = [];
+  // let query1 = "SELECT *, COUNT(expiry_date) as count FROM `competetion_registration` WHERE expiry_date = '2022-10-02';";
+  let query1 = "SELECT *, COUNT(expiry_date) as count FROM `competetion_registration` GROUP BY expiry_date";
+  let query2 = "SELECT *, COUNT(subject_id) as count FROM `competition_new_initiate` GROUP BY test_date";
+  con.query(query1, (err, results) => {
     if (err) {
       console.log(err);
     } else {
-      // console.log(results);
+    console.log('query1', results);
       let eDate = [];
       for (let index = 0; index < results.length; index++) {
         const expiryDate = results[index].expiry_date;
         const count = results[index].count;
-        const subjectId =results[index].subject
-        const date =`${moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY")} TO ${moment(expiryDate).format("DD-MM-YYYY")}`;
-        const details = {subjectId: subjectId, date:moment(expiryDate).format("DD-MM-YYYY"), count:count }
+        const subjectId = results[index].subject
+        const weeklyDate = `${moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY")} TO ${moment(expiryDate).format("DD-MM-YYYY")}`;
+        const details = { subjectId: subjectId, date: moment(expiryDate).format("DD-MM-YYYY"), count: count }
         eDate.push({
-          label: date,
+          label: weeklyDate,
           value: expiryDate,
           details: details,
+          startDate:moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY"),
+          lastDate:moment(expiryDate).format("DD-MM-YYYY"),
         });
-        console.log("expiryDate", expiryDate);
+        // console.log("expiryDate", expiryDate);
       }
-      console.log("eDate", eDate);
+     
+      con.query(query2,(err,results1)=>{
+        
+        if(err) throw err;
+        else{
+          second_res = results1;
+          // console.log('query2',results1); test_date>='2022-10-10' AND test_date<'2022-10-16'
+          let comp_data = [];
+          for(let i=0; i<results1.length; i++){
+            let test_date = results1[i].test_date >= eDate.startDate && results1[i].test_date < eDate.lastDate;
+            comp_data.push({
+              check_date: test_date,
+            });
+          }
+          res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:comp_data }));
+          // res.send(apiResponse(results));
+        }
+      })
+      
+      // console.log("eDate", eDate);
       console.log("results", results);
-      res.send(apiResponse({ results: results, eDate: eDate }));
+      // res.send(apiResponse({ results: results, eDate: eDate }));
     }
+    
   });
+  
+  //res.send(apiResponse(results1));
 });
+
 app.get("/registration", (req, res) => {
   let query =
     "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
@@ -82,16 +138,29 @@ app.get("/registration", (req, res) => {
   });
 });
 
-app.get("/registrationUser/:tRecord", (req, res) => {
-  console.log("req.params.tRecord", req.params.tRecord);
-  let tr = req.params.tRecord;
+app.get("/totalRegistration/:sId/:dateRecord", (req, res) => {
+  console.log(req.params.sId, req.params.dateRecord);
+  // let subjectId = req.params.sId;
+  // let date = req.params.dateRecord;
   // let query = "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
-  let query = `SELECT * FROM competetion_registration WHERE (expiry_date='${tr}' and subject = 13)`;
-  con.query(query, (err, results) => {
-    if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
-  });
+  // // let query = `SELECT * FROM competetion_registration WHERE (expiry_date='${date}' and subject = '${subjectId}')`;
+  // con.query(query,(err, results) => {
+  //   if (err) throw err;
+  //   else {
+  //     let subjectId = req.params.sId;
+  //     let date = req.params.dateRecord;
+  //     let totalRegistration = [];
+  //     for (let index = 0; index < results.length; index++) {
+  //       totalRegistration.push({
+  //         label: date,
+  //         value: subjectId,
+  //       });
+  //     }
+  //     console.log('totalRegistration', totalRegistration)
+  //     console.log('result',results);
+  //     res.send(apiResponse(results));
+  //   }
+  // });
 });
 
 // JOIN
@@ -174,7 +243,7 @@ app.get("/subjectrecord", (req, res) => {
   con.query(query, (err, results) => {
     if (err) throw err;
     console.log(results);
-    res.send(apiResponse(results));
+    res.send(apiResponse(results)); 
   });
 });
 
@@ -198,6 +267,7 @@ app.get("/totalrecord", (req, res) => {
 // SELECT * FROM `competetion_registration` where expiry_date='2022-10-09' AND subject=6
 /**************************************************************/
 // ================== TOTAL COMPETITION==============
+// in box --> SELECT *, count(subject_id)as count FROM `competition_new_initiate` GROUP BY (test_date);
 // SELECT * FROM `competition_new_initiate` WHERE subject_id=13 AND test_date>='2022-10-10' AND test_date<'2022-10-16'
 // ===============TOTAL REGISTRATION================
 // SELECT * FROM `competetion_registration` WHERE subject=13 AND expiry_date='2023-02-12'
