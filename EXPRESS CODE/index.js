@@ -82,7 +82,7 @@ app.get("/memberregistration", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-    console.log('query1', results);
+    // console.log('query1', results);
       let eDate = [];
       for (let index = 0; index < results.length; index++) {
         const expiryDate = results[index].expiry_date;
@@ -99,27 +99,32 @@ app.get("/memberregistration", (req, res) => {
         });
         // console.log("expiryDate", expiryDate);
       }
-     
+     console.log('eDate', eDate)
       con.query(query2,(err,results1)=>{
         
         if(err) throw err;
         else{
           second_res = results1;
           // console.log('query2',results1); test_date>='2022-10-10' AND test_date<'2022-10-16'
-          let comp_data = [];
+          let compData = [];
           for(let i=0; i<results1.length; i++){
-            let test_date = results1[i].test_date >= eDate.startDate && results1[i].test_date < eDate.lastDate;
-            comp_data.push({
-              check_date: test_date,
-            });
+            console.log('test_date', results1[i].test_date,eDate[3].startDate,eDate[3].lastDate)
+            if(results1[i].test_date >= eDate[3].startDate && results1[i].test_date < eDate[3].lastDate){
+              compData.push({
+                check_date: test_date,
+              });
+            }
           }
-          res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:comp_data }));
+          console.log('comp_data', compData);
+          res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:compData }));
+          // res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:compData }));
+            // console.log('result1', results1)
           // res.send(apiResponse(results));
         }
       })
       
       // console.log("eDate", eDate);
-      console.log("results", results);
+      // console.log("results", results);
       // res.send(apiResponse({ results: results, eDate: eDate }));
     }
     
