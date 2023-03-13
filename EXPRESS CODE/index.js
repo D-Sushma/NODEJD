@@ -104,21 +104,27 @@ app.get("/memberregistration", (req, res) => {
         
         if(err) throw err;
         else{
-          second_res = results1;
+          // second_res = results1;
+          second_res.push({
+            results1:results1,
+            formate_tDate: moment(results1.test_date).format("DD-MM-YYYY"),
+          });
+          
           // console.log('query2',results1); test_date>='2022-10-10' AND test_date<'2022-10-16'
           let compData = [];
           for(let i=0; i<results1.length; i++){
-            console.log('test_date', results1[i].test_date,eDate[3].startDate,eDate[3].lastDate)
-            if(results1[i].test_date >= eDate[3].startDate && results1[i].test_date < eDate[3].lastDate){
+            let testDate  = results1[i].test_date;
+            let finalTestDate = moment(testDate).format("DD-MM-YYYY");
+            console.log('test_date', finalTestDate,eDate[3].startDate,eDate[3].lastDate)
+            if(finalTestDate >= eDate[3].startDate && finalTestDate < eDate[3].lastDate){
               compData.push({
-                check_date: test_date,
+                check_date: finalTestDate,
               });
             }
           }
           console.log('comp_data', compData);
-          res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:compData }));
+          res.send(apiResponse({results:results, eDate: eDate, second_res: second_res, testDate:compData }));
           // res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:compData }));
-            // console.log('result1', results1)
           // res.send(apiResponse(results));
         }
       })
