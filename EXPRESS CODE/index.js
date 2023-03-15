@@ -72,84 +72,26 @@ app.get("/usertabledetails", (req, res) => {
   });
 });
 
-app.get("/memberregistration", (req, res) => {
-  var first_res = [];
-  var second_res = [];
-  // let query1 = "SELECT *, COUNT(expiry_date) as count FROM `competetion_registration` WHERE expiry_date = '2022-10-02';";
-  let query1 = "SELECT * FROM `competetion_registration` ";
-  // let query2 = "SELECT test_date, COUNT(subject_id) as count FROM `competition_new_initiate` GROUP BY test_date";
-  con.query(query1, (err, results) => {
-    if (err) {
-      console.log(err);
-    } else {
-    // console.log('query1', results);
-    expiryDate = "";
-    let startDate = moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY");
-      // let eDate = [];
-      // let newres =[];
-      // for (let index = 0; index < results.length; index++) {
-      //   const expiryDate = results[index].expiry_date;
-      //   const count = results[index].count;
-      //   const subjectId = results[index].subject
-      //   const weeklyDate = `${moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY")} TO ${moment(expiryDate).format("DD-MM-YYYY")}`;
-      //   const details = { subjectId: subjectId, date: moment(expiryDate).format("DD-MM-YYYY"), count: count }
-      //   eDate.push({
-      //     label: weeklyDate,
-      //     value: expiryDate,
-      //     details: details,
-      //     startDate:moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY"),
-      //     lastDate:moment(expiryDate).format("DD-MM-YYYY"),
-      //   });
-
-      //   newres.push({
-      //     initial_date: moment(expiryDate).subtract(6, "days").format("DD-MM-YYYY"),
-      //     end_date: moment(expiryDate).format("DD-MM-YYYY"),
-      //   })
-      //   // console.log("expiryDate", expiryDate);
-      // }
-    //  console.log('eDate', eDate)
-    //  let query2 = `SELECT * FROM competition_new_initiate  WHERE subject_id=13 AND test_date>='2022-10-10' AND test_date<'2022-10-16'`;
-     let query2 = `SELECT test_date, count FROM competition_new_initiate  WHERE subject_id=13 AND test_date>="${newres[0].initial_date}" AND test_date< "${newres[1].end_date}"`;
-      con.query(query2,(err,results1)=>{
-        
-        if(err) throw err;
-        else{
-          // second_res = results1;
-          // second_res.push({
-          //   // results1:results1,
-          //   formate_tDate: moment(results1.test_date).format("DD-MM-YYYY"),
-          // });
-          second_res.push({
-            results1:results1,
-          });
-          
-          // console.log('query2',results1); test_date>='2022-10-10' AND test_date<'2022-10-16'
-          // let compData = [];
-          // for(let i=0; i<results1.length; i++){
-          //   let testDate  = results1[i].test_date;
-          //   let finalTestDate = moment(testDate).format("DD-MM-YYYY");
-          //   // console.log('test_date', finalTestDate,eDate[3].startDate,eDate[3].lastDate)
-          //   if(finalTestDate >= eDate[3].startDate && finalTestDate < eDate[3].lastDate){
-          //     compData.push({
-          //       check_date: finalTestDate,
-          //     });
-          //   }
-          // }
-          // console.log('comp_data', compData);
-          res.send(apiResponse({results:results, eDate: eDate, second_res: second_res }));
-          // res.send(apiResponse({results:results, eDate: eDate, results1: second_res, testDate:compData }));
-          // res.send(apiResponse(results));
+app.get("/member-registration", (req, res) => {
+  let query =
+    "SELECT expiry_date,subject FROM competetion_registration WHERE subject = 13 OR subject =6";
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    const result = results.reduce(
+      (acc, curr) => {
+        const eDate = moment(curr.expiry_date).format("DD-MM-YYYY");
+        if (!acc.expiryDate.includes(eDate)) {
+          acc.expiryDate.push(eDate);
+          const startDate = moment(curr.expiry_date).subtract(6, "days").format("DD-MM-YYYY");
+          acc.dates.push({ expiryDate: eDate, startDate });
         }
-      })
-      
-      // console.log("eDate", eDate);
-      // console.log("results", results);
-      // res.send(apiResponse({ results: results, eDate: eDate }));
-    }
-    
+        if (!acc.subjectId.includes(curr.subject)) {
+          acc.subjectId.push(curr.subject);
+        }
+        return acc;
+      }, { subjectId: [], expiryDate: [], dates: [] });
+    res.send(apiResponse(result));
   });
-  
-  //res.send(apiResponse(results1));
 });
 
 app.get("/registration", (req, res) => {
@@ -267,7 +209,7 @@ app.get("/subjectrecord", (req, res) => {
   con.query(query, (err, results) => {
     if (err) throw err;
     console.log(results);
-    res.send(apiResponse(results)); 
+    res.send(apiResponse(results));
   });
 });
 
