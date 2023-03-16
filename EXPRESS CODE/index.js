@@ -97,17 +97,17 @@ app.get("/member-registration", (req, res) => {
   });
 });
 app.post("/submit-data" , (req, res) => {
-  let sub_id = req.body.subject_id;
+  const sub_id = req.body.subject_id;
   // let n_date = req.body.expiry_date;
   // let ex_date = moment(n_date).format("YYYY-MM-DD");
-  let ex_date = req.body.expiry_date;
+  const ex_date = req.body.expiry_date;
   console.log('sub_id, ex_date', sub_id, ex_date);
-  let query = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
+  const query = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
   console.log('query', query)
  // res.send({results:query});
   con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
+    // console.log(results);
    
     res.send({results:results});
   }); 
