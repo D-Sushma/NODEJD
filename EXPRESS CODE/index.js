@@ -33,6 +33,7 @@ var express = require("express");
 var cors = require("cors");
 // =======for formatting date
 var moment = require("moment");
+var bodyParser = require("body-parser");
 
 const corsOptions = {
   // origin: "http://127.0.0.1:3000",
@@ -52,11 +53,13 @@ const { connect } = require("./properties");
 // -------END-----------------------------------------------------
 //2. we are initializing the app using the express
 var app = express();
+// var jsonParser = bodyParser.json()
 app.use(cors(corsOptions));
-
+app.use(bodyParser.json());
 app.use("/users", users);
 app.use("/products", products);
 app.use("/orders", orders);
+app.use(bodyParser.urlencoded({extended:true}))
 // --------START----------------------------------------
 con.connect(function (err) {
   if (err) throw err;
@@ -71,12 +74,12 @@ app.get("/usertabledetails", (req, res) => {
     res.send(apiResponse(results));
   });
 });
-
+// ``````````````` --- FILTER RECORD SECTION start--- ````````````````` 
 app.get("/member-registration", (req, res) => {
-  let query =
-    "SELECT expiry_date,subject FROM competetion_registration WHERE subject = 13 OR subject =6";
+  let query = "SELECT expiry_date,subject FROM competetion_registration WHERE subject = 13 OR subject =6";
   con.query(query, (err, results) => {
     if (err) throw err;
+    // console.log(results);
     const result = results.reduce(
       (acc, curr) => {
         const eDate = moment(curr.expiry_date).format("DD-MM-YYYY");
@@ -93,7 +96,23 @@ app.get("/member-registration", (req, res) => {
     res.send(apiResponse(result));
   });
 });
-
+app.post("/submit-data" , (req, res) => {
+  let sub_id = req.body.subject_id;
+  // let n_date = req.body.expiry_date;
+  // let ex_date = moment(n_date).format("YYYY-MM-DD");
+  let ex_date = req.body.expiry_date;
+  console.log('sub_id, ex_date', sub_id, ex_date);
+  let query = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
+  console.log('query', query)
+ // res.send({results:query});
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+   
+    res.send({results:results});
+  }); 
+});
+// ``````````````` --- FILTER RECORD SECTION end--- ````````````````` 
 app.get("/registration", (req, res) => {
   let query =
     "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
