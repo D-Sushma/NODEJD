@@ -98,18 +98,23 @@ app.get("/member-registration", (req, res) => {
 });
 app.post("/submit-data" , (req, res) => {
   let sub_id = req.body.subject_id;
-  // let n_date = req.body.expiry_date;
-  // let ex_date = moment(n_date).format("YYYY-MM-DD");
   let ex_date = req.body.expiry_date;
-  console.log('sub_id, ex_date', sub_id, ex_date);
-  let query = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
-  console.log('query', query)
- // res.send({results:query});
-  con.query(query, (err, results) => {
+  let st_date = moment(ex_date).subtract(6, 'days').format("YYYY-MM-DD");
+
+  
+  console.log('sub_id, ex_date','st_date', sub_id, ex_date,st_date);
+  let query1 = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
+  let query2 = `SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}"`;
+  console.log('query1', query1);
+  console.log('query2', query2);
+  con.query(query1, (err, results) => {
     if (err) throw err;
-    console.log(results);
-   
-    res.send({results:results});
+    // console.log(results);
+    con.query(query2, (err,results2) => {
+      if(err) throw err;
+      // console.log(results2);
+      res.send({totalReg:results, totalComp:results2});
+    });
   }); 
 });
 // ``````````````` --- FILTER RECORD SECTION end--- ````````````````` 
