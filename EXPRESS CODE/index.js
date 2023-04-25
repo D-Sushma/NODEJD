@@ -101,13 +101,16 @@ app.post("/submit-data", (req, res) => {
   let ex_date = req.body.expiry_date;
   let st_date = moment(ex_date).subtract(6, 'days').format("YYYY-MM-DD");
   console.log('sub_id, ex_date, st_date', sub_id, ex_date, st_date);
-  let query1 = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
-  let query2 = `SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}"`;
+  // let query1 = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
+  // let query1 = `SELECT cr.id, cr.userid, cr.subscription, cr.status, cr.updated_at, cr.created_at, cr.expiry_date, CONCAT(q.name,' ',q.lname) AS userid_name FROM (SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}") AS cr INNER JOIN quiz_regdetails q ON cr.userid = q.id`;
+  let query1 = `SELECT cr.*, CONCAT(q.name,' ',q.lname) AS userid_name FROM (SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}") AS cr INNER JOIN quiz_regdetails q ON cr.userid = q.id`;
+  // let query2 = `SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}"`;
+  let query2 = `SELECT cni.*, q1.id AS q1_id, q2.id as q2_id, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM (SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}") AS cni LEFT JOIN quiz_regdetails q1 ON cni.p1 = q1.id LEFT JOIN quiz_regdetails q2 ON cni.p2 = q2.id`;
   console.log('query1', query1);
   console.log('query2', query2);
   con.query(query1, (err, results) => {
     if (err) throw err;
-    // console.log(results);
+    console.log(results);
     con.query(query2, (err, results2) => {
       if (err) throw err;
       // console.log(results2);
