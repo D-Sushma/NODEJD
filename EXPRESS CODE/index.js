@@ -160,11 +160,28 @@ app.get("/join", (req, res) => {
   // console.log("put inner join");
   // let query = "SELECT quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails WHERE competetion_registration.userid = quiz_regdetails.id";
   let query =
-    "SELECT competetion_registration.id, competetion_registration.subject, competetion_registration.subscription, competetion_registration.status, competetion_registration.updated_at, competetion_registration.created_at, competetion_registration.expiry_date, quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails ON competetion_registration.userid = quiz_regdetails.id";
-  con.query(query, (err, results) => {
+    "SELECT competetion_registration.id, competetion_registration.subject, competetion_registration.subscription, competetion_registration.status, competetion_registration.updated_at, competetion_registration.created_at, competetion_registration.expiry_date, quiz_regdetails.name,quiz_regdetails.lname, CONCAT(quiz_regdetails.name,' ',quiz_regdetails.lname) AS full_name from competetion_registration INNER JOIN quiz_regdetails ON competetion_registration.userid = quiz_regdetails.id";
+    let items = [];
+    con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    else {
+      // console.log(results);
+      
+      for(let i=0; i < results.length; i++){
+        const updated_at = moment(results[i].updated_at).format('DD/MM/YYYY');
+        const created_at = moment(results[i].created_at).format('DD/MM/YYYY');
+        const expiry_date = moment(results[i].expiry_date).format('DD/MM/YYYY');
+        items.push({
+          updated: updated_at,
+          created: created_at,
+          expiryDate:expiry_date,
+        });
+        // console.log('updated_at,created_at,expiry_date', updated_at,created_at,expiry_date)
+      }
+      // console.log('items', items)
+    }
+    // res.send(apiResponse(results));
+    res.send(apiResponse({results: results, items:items}));
   });
 });
 
