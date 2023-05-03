@@ -171,15 +171,23 @@ app.get("/join", (req, res) => {
         const updated_at = moment(results[i].updated_at).format('DD/MM/YYYY');
         const created_at = moment(results[i].created_at).format('DD/MM/YYYY');
         const expiry_date = moment(results[i].expiry_date).format('DD/MM/YYYY');
+
+        const id = results[i].id;
+        const full_name = results[i].full_name;
+        const status = results[i].status;
+        const subject = results[i].subject;
+        const subscription = results[i].subscription;
         items.push({
           updated: updated_at,
           created: created_at,
           expiryDate:expiry_date,
+          id: id,full_name:full_name,
+          status: status === 1 ?'Active' : 'Inactive',
+          subject:subject=== 13 ? 'GK' : 'English',
+          subscription:subscription === 1 ? 'Weekly' : '---'
         });
-        // console.log('updated_at,created_at,expiry_date', updated_at,created_at,expiry_date)
+        }
       }
-      // console.log('items', items)
-    }
     // res.send(apiResponse(results));
     res.send(apiResponse({results: results, items:items}));
   });
