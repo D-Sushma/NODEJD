@@ -161,17 +161,16 @@ app.get("/join", (req, res) => {
   // let query = "SELECT quiz_regdetails.name,quiz_regdetails.lname from competetion_registration INNER JOIN quiz_regdetails WHERE competetion_registration.userid = quiz_regdetails.id";
   let query =
     "SELECT competetion_registration.id, competetion_registration.subject, competetion_registration.subscription, competetion_registration.status, competetion_registration.updated_at, competetion_registration.created_at, competetion_registration.expiry_date, quiz_regdetails.name,quiz_regdetails.lname, CONCAT(quiz_regdetails.name,' ',quiz_regdetails.lname) AS full_name from competetion_registration INNER JOIN quiz_regdetails ON competetion_registration.userid = quiz_regdetails.id";
-    let items = [];
-    con.query(query, (err, results) => {
+  let items = [];
+  con.query(query, (err, results) => {
     if (err) throw err;
     else {
       // console.log(results);
-      
-      for(let i=0; i < results.length; i++){
+      // ** make for MUI-DATATABLES PACKAGE...
+      for (let i = 0; i < results.length; i++) {
         const updated_at = moment(results[i].updated_at).format('DD/MM/YYYY');
         const created_at = moment(results[i].created_at).format('DD/MM/YYYY');
         const expiry_date = moment(results[i].expiry_date).format('DD/MM/YYYY');
-
         const id = results[i].id;
         const full_name = results[i].full_name;
         const status = results[i].status;
@@ -180,16 +179,16 @@ app.get("/join", (req, res) => {
         items.push({
           updated: updated_at,
           created: created_at,
-          expiryDate:expiry_date,
-          id: id,full_name:full_name,
-          status: status === 1 ?'Active' : 'Inactive',
-          subject:subject=== 13 ? 'GK' : 'English',
-          subscription:subscription === 1 ? 'Weekly' : '---'
+          expiryDate: expiry_date,
+          id: id, full_name: full_name,
+          status: status === 1 ? 'Active' : 'Inactive',
+          subject: subject === 13 ? 'GK' : 'English',
+          subscription: subscription === 1 ? 'Weekly' : '---'
         });
-        }
       }
+    }
     // res.send(apiResponse(results));
-    res.send(apiResponse({results: results, items:items}));
+    res.send(apiResponse({ results: results, items: items }));
   });
 });
 
@@ -201,10 +200,39 @@ app.get("/competitionlistdetails", (req, res) => {
   /* ******ACCESS MULTIPLE COLUMN WITH DEFINE SHORT NAME****** */
   let query =
     "SELECT c.*, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name from competition_new_initiate c INNER JOIN quiz_regdetails q1 ON c.p1 = q1.id INNER JOIN quiz_regdetails q2 ON c.p2 = q2.id";
+  let items = [];
   con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    // console.log(results);
+    else {
+      // console.log(results);
+      // ** make for MUI-DATATABLES PACKAGE...
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const competition_group_id = results[i].competition_group_id;
+        const subject = results[i].subject_id;
+        const p1_name = results[i].p1_name;
+        const p2_name = results[i].p2_name;
+        const test_date = results[i].test_date;
+        const subscription = results[i].subscription_id;
+        const slot_start = results[i].slot_start;
+        const slot_end = results[i].slot_end;
+
+        items.push({
+          sno: id,
+          competition_group_id:competition_group_id,
+          subject: (subject===13) ? 'GK'  : (subject===6) ? 'ENGLISH' : '---',
+          p1_name:p1_name,
+          p2_name:p2_name,
+          test_date: moment(test_date).format('DD/MM/YYYY'),
+          subscription: (subscription===1) ? 'Weekly' : '---',
+          slot_start:slot_start,
+          slot_end:slot_end,
+        });
+      }
+    }
+    // res.send(apiResponse(results));
+    res.send(apiResponse({results:results, items:items}));
   });
 });
 
@@ -215,10 +243,31 @@ app.get("/competitiongroupdetails", (req, res) => {
   // let query = "SELECT c.id,c.competition_group_id, c.winner_id,c.test_date, COUNT(competition_group_id) AS grp_cnt, CONCAT(q.name,' ',q.lname) AS winner_name FROM (competition_new_initiate c INNER JOIN quiz_regdetails q ON c.winner_id = q.id) GROUP BY competition_group_id";
   let query =
     "SELECT t1.id,t1.competition_group_id, t1.winner_id,t1.test_date,t1.grp_cnt,CONCAT(q.name,' ',q.lname) AS winner_name from (SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id) AS t1 LEFT JOIN quiz_regdetails q ON t1.winner_id = q.id";
-  con.query(query, (err, results) => {
+  let items = [];
+    con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    // console.log(results);
+    // ** make for MUI-DATATABLES PACKAGE...
+    else{
+      // console.log(results);
+      for(let i=0; i<results.length; i++){
+        const id = results[i].id;
+        const competition_group_id = results[i].competition_group_id;
+        const winner_name = results[i].winner_name;
+        const test_date = results[i].test_date;
+        const grp_cnt = results[i].grp_cnt;
+
+        items.push({
+          sno:id,
+          competition_group_name:competition_group_id,
+          winner_name:winner_name,
+          competition_date:moment(test_date).format('DD/MM/YYYY'),
+          total_competition:grp_cnt,
+        })
+      }
+    }
+    // res.send(apiResponse(results));
+    res.send(apiResponse({results:results, items:items}));
   });
 });
 
