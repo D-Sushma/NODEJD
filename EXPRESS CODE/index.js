@@ -115,9 +115,9 @@ app.post("/submit-data", (req, res) => {
     if (err) throw err;
     // console.log(results);
     // ** make for MUI-DATATABLES PACKAGE...(for totalReg = query1)
-    else{
+    else {
       // console.log(results);
-      for(let i=0; i<results.length;i++){
+      for (let i = 0; i < results.length; i++) {
         const id = results[i].id;
         const userid_name = results[i].userid_name;
         const subject = results[i].subject;
@@ -128,47 +128,47 @@ app.post("/submit-data", (req, res) => {
         const expiry_date = results[i].expiry_date;
 
         totalRegItems.push({
-          id : id,userid_name:userid_name,
-          subject : (subject===13) ? "GK" : (subject===6) ? "ENGLISH" : "---",
-          subscription : (subscription===1) ? "Weekly" : "---",
-          status : (status===1) ? "Active" : "Inactive",
-          updated_at : moment(updated_at).format('DD/MM/YYYY'),
-          created_at : moment(created_at).format('DD/MM/YYYY'),
-          expiry_date : moment(expiry_date).format('DD/MM/YYYY'),
-         })
+          id: id, userid_name: userid_name,
+          subject: (subject === 13) ? "GK" : (subject === 6) ? "ENGLISH" : "---",
+          subscription: (subscription === 1) ? "Weekly" : "---",
+          status: (status === 1) ? "Active" : "Inactive",
+          updated_at: moment(updated_at).format('DD/MM/YYYY'),
+          created_at: moment(created_at).format('DD/MM/YYYY'),
+          expiry_date: moment(expiry_date).format('DD/MM/YYYY'),
+        })
       }
     }
     con.query(query2, (err, results2) => {
       if (err) throw err;
       // console.log(results2);
       // ** make for MUI-DATATABLES PACKAGE...(for totalComp = query2)
-    else{
-      // console.log(results2);
-      for(let i=0; i<results2.length;i++){
-        const id = results2[i].id;
-        const p1 = results2[i].p1;
-        const p2 = results2[i].p2;
-        const p1_name = results2[i].p1_name;
-        const p2_name = results2[i].p2_name;
-        const p1_correct_count = results2[i].p1_correct_count;
-        const p2_correct_count = results2[i].p2_correct_count;
-        const p1_time_taken = results2[i].p1_time_taken;
-        const p2_time_taken = results2[i].p2_time_taken;
-        const winner_id = results2[i].winner_id;
-        const slot_start = results2[i].slot_start;
-        const slot_end = results2[i].slot_end;
-        const is_walk_over = results2[i].is_walk_over;
+      else {
+        // console.log(results2);
+        for (let i = 0; i < results2.length; i++) {
+          const id = results2[i].id;
+          const p1 = results2[i].p1;
+          const p2 = results2[i].p2;
+          const p1_name = results2[i].p1_name;
+          const p2_name = results2[i].p2_name;
+          const p1_correct_count = results2[i].p1_correct_count;
+          const p2_correct_count = results2[i].p2_correct_count;
+          const p1_time_taken = results2[i].p1_time_taken;
+          const p2_time_taken = results2[i].p2_time_taken;
+          const winner_id = results2[i].winner_id;
+          const slot_start = results2[i].slot_start;
+          const slot_end = results2[i].slot_end;
+          const is_walk_over = results2[i].is_walk_over;
 
-        totalCompItems.push({
-          id:id, p1_name:p1_name, p2_name:p2_name, p1:p1, p2:p2,
-          p1_correct_count:p1_correct_count, p2_correct_count:p2_correct_count,
-          p1_time_taken:p1_time_taken, p2_time_taken:p2_time_taken, slot_start:slot_start,
-          slot_end:slot_end, is_walk_over:is_walk_over,
-          winner_id:(winner_id===p1) ? p1_name : (winner_id===p2) ? p2_name : "---", 
-        })
+          totalCompItems.push({
+            id: id, p1_name: p1_name, p2_name: p2_name, p1: p1, p2: p2,
+            p1_correct_count: p1_correct_count, p2_correct_count: p2_correct_count,
+            p1_time_taken: p1_time_taken, p2_time_taken: p2_time_taken, slot_start: slot_start,
+            slot_end: slot_end, is_walk_over: is_walk_over,
+            winner_id: (winner_id === p1) ? p1_name : (winner_id === p2) ? p2_name : "---",
+          })
+        }
       }
-    }
-      res.send({ totalReg: results, totalComp: results2, totalRegItems:totalRegItems, totalCompItems:totalCompItems});
+      res.send({ totalReg: results, totalComp: results2, totalRegItems: totalRegItems, totalCompItems: totalCompItems });
     });
     // res.send(results);
   });
@@ -274,19 +274,19 @@ app.get("/competitionlistdetails", (req, res) => {
 
         items.push({
           sno: id,
-          competition_group_id:competition_group_id,
-          subject: (subject===13) ? 'GK'  : (subject===6) ? 'ENGLISH' : '---',
-          p1_name:p1_name,
-          p2_name:p2_name,
+          competition_group_id: competition_group_id,
+          subject: (subject === 13) ? 'GK' : (subject === 6) ? 'ENGLISH' : '---',
+          p1_name: p1_name,
+          p2_name: p2_name,
           test_date: moment(test_date).format('DD/MM/YYYY'),
-          subscription: (subscription===1) ? 'Weekly' : '---',
-          slot_start:slot_start,
-          slot_end:slot_end,
+          subscription: (subscription === 1) ? 'Weekly' : '---',
+          slot_start: slot_start,
+          slot_end: slot_end,
         });
       }
     }
     // res.send(apiResponse(results));
-    res.send(apiResponse({results:results, items:items}));
+    res.send(apiResponse({ results: results, items: items }));
   });
 });
 
@@ -298,13 +298,13 @@ app.get("/competitiongroupdetails", (req, res) => {
   let query =
     "SELECT t1.id,t1.competition_group_id, t1.winner_id,t1.test_date,t1.grp_cnt,CONCAT(q.name,' ',q.lname) AS winner_name from (SELECT id,competition_group_id, winner_id,test_date, COUNT(competition_group_id) as grp_cnt FROM competition_new_initiate GROUP BY competition_group_id) AS t1 LEFT JOIN quiz_regdetails q ON t1.winner_id = q.id";
   let items = [];
-    con.query(query, (err, results) => {
+  con.query(query, (err, results) => {
     if (err) throw err;
     // console.log(results);
     // ** make for MUI-DATATABLES PACKAGE...
-    else{
+    else {
       // console.log(results);
-      for(let i=0; i<results.length; i++){
+      for (let i = 0; i < results.length; i++) {
         const id = results[i].id;
         const competition_group_id = results[i].competition_group_id;
         const winner_name = results[i].winner_name;
@@ -312,16 +312,16 @@ app.get("/competitiongroupdetails", (req, res) => {
         const grp_cnt = results[i].grp_cnt;
 
         items.push({
-          sno:id,
-          competition_group_name:competition_group_id,
-          winner_name:winner_name,
-          competition_date:moment(test_date).format('DD/MM/YYYY'),
-          total_competition:grp_cnt,
+          sno: id,
+          competition_group_name: competition_group_id,
+          winner_name: winner_name,
+          competition_date: moment(test_date).format('DD/MM/YYYY'),
+          total_competition: grp_cnt,
         })
       }
     }
     // res.send(apiResponse(results));
-    res.send(apiResponse({results:results, items:items}));
+    res.send(apiResponse({ results: results, items: items }));
   });
 });
 
@@ -335,10 +335,39 @@ app.get("/moredetailstable/:id", (req, res) => {
   // let query = `SELECT c.*, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM competition_new_initiate c INNER JOIN quiz_regdetails q1 ON c.p1 = q1.id INNER JOIN quiz_regdetails q2 ON c.p2 = q2.id WHERE competition_group_id = "${cgId}"`;
   // ==========right=======
   let query = `SELECT t1.*, q1.id AS q1_id, q2.id AS q2_id, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM (SELECT * FROM competition_new_initiate) AS t1 LEFT JOIN quiz_regdetails q1 ON t1.p1 = q1.id LEFT JOIN  quiz_regdetails q2 ON t1.p2 = q2.id WHERE t1.competition_group_id = "${cgId}"`;
+  let items = [];
   con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    // console.log(results);
+    // ** make for MUI-DATATABLES PACKAGE...(for totalComp = query2)
+    else {
+      // console.log(results);
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const p1 = results[i].p1;
+        const p2 = results[i].p2;
+        const p1_name = results[i].p1_name;
+        const p2_name = results[i].p2_name;
+        const p1_correct_count = results[i].p1_correct_count;
+        const p2_correct_count = results[i].p2_correct_count;
+        const p1_time_taken = results[i].p1_time_taken;
+        const p2_time_taken = results[i].p2_time_taken;
+        const winner_id = results[i].winner_id;
+        const slot_start = results[i].slot_start;
+        const slot_end = results[i].slot_end;
+        const is_walk_over = results[i].is_walk_over;
+
+        items.push({
+          id: id, p1_name: p1_name, p2_name: p2_name, p1: p1, p2: p2,
+          p1_correct_count: p1_correct_count, p2_correct_count: p2_correct_count,
+          p1_time_taken: p1_time_taken, p2_time_taken: p2_time_taken, slot_start: slot_start,
+          slot_end: slot_end, is_walk_over: is_walk_over,
+          winner_id: (winner_id === p1) ? p1_name : (winner_id === p2) ? p2_name : "---",
+        })
+      }
+    }
+    // res.send(apiResponse(results));
+    res.send({ results: results, items: items});
   });
 });
 // PASS DYNAMIC DATA----------------------------->>>>>>>>>>>>
