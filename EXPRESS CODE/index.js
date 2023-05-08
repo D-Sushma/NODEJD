@@ -59,7 +59,7 @@ app.use(bodyParser.json());
 app.use("/users", users);
 app.use("/products", products);
 app.use("/orders", orders);
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }));
 // --------START----------------------------------------
 con.connect(function (err) {
   if (err) throw err;
@@ -68,15 +68,40 @@ con.connect(function (err) {
 app.get("/usertabledetails", (req, res) => {
   // let sqlQuery = "SELECT * FROM employee";
   let sqlQuery = "SELECT * FROM quiz_regdetails";
+
+  let items = [];
   let query = con.query(sqlQuery, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    // console.log(results);
+    // ** make for MUI-DATATABLES PACKAGE...
+    else {
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const name = results[i].name;
+        const lname = results[i].lname;
+        const mobile = results[i].mobile;
+        const emailid = results[i].emailid;
+        const status = results[i].status;
+        const created_at = results[i].created_at;
+
+        items.push({
+          id: id,
+          full_name: name + " " + lname,
+          mobile: mobile,
+          emailid: emailid,
+          status: status === 1 ? "Active" : "Inactive",
+          created_at: moment(created_at).format("DD/MM/YYYY"),
+        });
+      }
+    }
+    // res.send(apiResponse(results));
+    res.send(apiResponse({ results: results, items: items }));
   });
 });
-// ``````````````` --- FILTER RECORD SECTION start--- ````````````````` 
+// ``````````````` --- FILTER RECORD SECTION start--- `````````````````
 app.get("/member-registration", (req, res) => {
-  let query = "SELECT expiry_date,subject FROM competetion_registration WHERE subject = 13 OR subject =6";
+  let query =
+    "SELECT expiry_date,subject FROM competetion_registration WHERE subject = 13 OR subject =6";
   con.query(query, (err, results) => {
     if (err) throw err;
     // console.log(results);
@@ -85,29 +110,33 @@ app.get("/member-registration", (req, res) => {
         const eDate = moment(curr.expiry_date).format("DD-MM-YYYY");
         if (!acc.expiryDate.includes(eDate)) {
           acc.expiryDate.push(eDate);
-          const startDate = moment(curr.expiry_date).subtract(6, "days").format("DD-MM-YYYY");
+          const startDate = moment(curr.expiry_date)
+            .subtract(6, "days")
+            .format("DD-MM-YYYY");
           acc.dates.push({ expiryDate: eDate, startDate });
         }
         if (!acc.subjectId.includes(curr.subject)) {
           acc.subjectId.push(curr.subject);
         }
         return acc;
-      }, { subjectId: [], expiryDate: [], dates: [] });
+      },
+      { subjectId: [], expiryDate: [], dates: [] }
+    );
     res.send(apiResponse(result));
   });
 });
 app.post("/submit-data", (req, res) => {
   let sub_id = req.body.subject_id;
   let ex_date = req.body.expiry_date;
-  let st_date = moment(ex_date).subtract(6, 'days').format("YYYY-MM-DD");
-  console.log('sub_id, ex_date, st_date', sub_id, ex_date, st_date);
+  let st_date = moment(ex_date).subtract(6, "days").format("YYYY-MM-DD");
+  console.log("sub_id, ex_date, st_date", sub_id, ex_date, st_date);
   // let query1 = `SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}"`;
   // let query1 = `SELECT cr.id, cr.userid, cr.subscription, cr.status, cr.updated_at, cr.created_at, cr.expiry_date, CONCAT(q.name,' ',q.lname) AS userid_name FROM (SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}") AS cr INNER JOIN quiz_regdetails q ON cr.userid = q.id`;
   let query1 = `SELECT cr.*, CONCAT(q.name,' ',q.lname) AS userid_name FROM (SELECT * FROM competetion_registration WHERE subject = "${sub_id}" AND expiry_date = "${ex_date}") AS cr INNER JOIN quiz_regdetails q ON cr.userid = q.id`;
   // let query2 = `SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}"`;
   let query2 = `SELECT cni.*, q1.id AS q1_id, q2.id as q2_id, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name FROM (SELECT * FROM competition_new_initiate WHERE subject_id = "${sub_id}" AND test_date>= "${st_date}" AND test_date<"${ex_date}") AS cni LEFT JOIN quiz_regdetails q1 ON cni.p1 = q1.id LEFT JOIN quiz_regdetails q2 ON cni.p2 = q2.id`;
-  console.log('query1', query1);
-  console.log('query2', query2);
+  console.log("query1", query1);
+  console.log("query2", query2);
 
   let totalRegItems = [];
   let totalCompItems = [];
@@ -128,14 +157,15 @@ app.post("/submit-data", (req, res) => {
         const expiry_date = results[i].expiry_date;
 
         totalRegItems.push({
-          id: id, userid_name: userid_name,
-          subject: (subject === 13) ? "GK" : (subject === 6) ? "ENGLISH" : "---",
-          subscription: (subscription === 1) ? "Weekly" : "---",
-          status: (status === 1) ? "Active" : "Inactive",
-          updated_at: moment(updated_at).format('DD/MM/YYYY'),
-          created_at: moment(created_at).format('DD/MM/YYYY'),
-          expiry_date: moment(expiry_date).format('DD/MM/YYYY'),
-        })
+          id: id,
+          userid_name: userid_name,
+          subject: subject === 13 ? "GK" : subject === 6 ? "ENGLISH" : "---",
+          subscription: subscription === 1 ? "Weekly" : "---",
+          status: status === 1 ? "Active" : "Inactive",
+          updated_at: moment(updated_at).format("DD/MM/YYYY"),
+          created_at: moment(created_at).format("DD/MM/YYYY"),
+          expiry_date: moment(expiry_date).format("DD/MM/YYYY"),
+        });
       }
     }
     con.query(query2, (err, results2) => {
@@ -160,20 +190,34 @@ app.post("/submit-data", (req, res) => {
           const is_walk_over = results2[i].is_walk_over;
 
           totalCompItems.push({
-            id: id, p1_name: p1_name, p2_name: p2_name, p1: p1, p2: p2,
-            p1_correct_count: p1_correct_count, p2_correct_count: p2_correct_count,
-            p1_time_taken: p1_time_taken, p2_time_taken: p2_time_taken, slot_start: slot_start,
-            slot_end: slot_end, is_walk_over: is_walk_over,
-            winner_id: (winner_id === p1) ? p1_name : (winner_id === p2) ? p2_name : "---",
-          })
+            id: id,
+            p1_name: p1_name,
+            p2_name: p2_name,
+            p1: p1,
+            p2: p2,
+            p1_correct_count: p1_correct_count,
+            p2_correct_count: p2_correct_count,
+            p1_time_taken: p1_time_taken,
+            p2_time_taken: p2_time_taken,
+            slot_start: slot_start,
+            slot_end: slot_end,
+            is_walk_over: is_walk_over,
+            winner_id:
+              winner_id === p1 ? p1_name : winner_id === p2 ? p2_name : "---",
+          });
         }
       }
-      res.send({ totalReg: results, totalComp: results2, totalRegItems: totalRegItems, totalCompItems: totalCompItems });
+      res.send({
+        totalReg: results,
+        totalComp: results2,
+        totalRegItems: totalRegItems,
+        totalCompItems: totalCompItems,
+      });
     });
     // res.send(results);
   });
 });
-// ``````````````` --- FILTER RECORD SECTION end--- ````````````````` 
+// ``````````````` --- FILTER RECORD SECTION end--- `````````````````
 app.get("/registration", (req, res) => {
   let query =
     "SELECT * FROM competetion_registration WHERE (expiry_date='2022-10-23' and subject = 13)";
@@ -222,9 +266,9 @@ app.get("/join", (req, res) => {
       // console.log(results);
       // ** make for MUI-DATATABLES PACKAGE...
       for (let i = 0; i < results.length; i++) {
-        const updated_at = moment(results[i].updated_at).format('DD/MM/YYYY');
-        const created_at = moment(results[i].created_at).format('DD/MM/YYYY');
-        const expiry_date = moment(results[i].expiry_date).format('DD/MM/YYYY');
+        const updated_at = moment(results[i].updated_at).format("DD/MM/YYYY");
+        const created_at = moment(results[i].created_at).format("DD/MM/YYYY");
+        const expiry_date = moment(results[i].expiry_date).format("DD/MM/YYYY");
         const id = results[i].id;
         const full_name = results[i].full_name;
         const status = results[i].status;
@@ -234,10 +278,11 @@ app.get("/join", (req, res) => {
           updated: updated_at,
           created: created_at,
           expiryDate: expiry_date,
-          id: id, full_name: full_name,
-          status: status === 1 ? 'Active' : 'Inactive',
-          subject: subject === 13 ? 'GK' : 'English',
-          subscription: subscription === 1 ? 'Weekly' : '---'
+          id: id,
+          full_name: full_name,
+          status: status === 1 ? "Active" : "Inactive",
+          subject: subject === 13 ? "GK" : "English",
+          subscription: subscription === 1 ? "Weekly" : "---",
         });
       }
     }
@@ -275,11 +320,11 @@ app.get("/competitionlistdetails", (req, res) => {
         items.push({
           sno: id,
           competition_group_id: competition_group_id,
-          subject: (subject === 13) ? 'GK' : (subject === 6) ? 'ENGLISH' : '---',
+          subject: subject === 13 ? "GK" : subject === 6 ? "ENGLISH" : "---",
           p1_name: p1_name,
           p2_name: p2_name,
-          test_date: moment(test_date).format('DD/MM/YYYY'),
-          subscription: (subscription === 1) ? 'Weekly' : '---',
+          test_date: moment(test_date).format("DD/MM/YYYY"),
+          subscription: subscription === 1 ? "Weekly" : "---",
           slot_start: slot_start,
           slot_end: slot_end,
         });
@@ -315,9 +360,9 @@ app.get("/competitiongroupdetails", (req, res) => {
           sno: id,
           competition_group_name: competition_group_id,
           winner_name: winner_name,
-          competition_date: moment(test_date).format('DD/MM/YYYY'),
+          competition_date: moment(test_date).format("DD/MM/YYYY"),
           total_competition: grp_cnt,
-        })
+        });
       }
     }
     // res.send(apiResponse(results));
@@ -358,16 +403,25 @@ app.get("/moredetailstable/:id", (req, res) => {
         const is_walk_over = results[i].is_walk_over;
 
         items.push({
-          id: id, p1_name: p1_name, p2_name: p2_name, p1: p1, p2: p2,
-          p1_correct_count: p1_correct_count, p2_correct_count: p2_correct_count,
-          p1_time_taken: p1_time_taken, p2_time_taken: p2_time_taken, slot_start: slot_start,
-          slot_end: slot_end, is_walk_over: is_walk_over,
-          winner_id: (winner_id === p1) ? p1_name : (winner_id === p2) ? p2_name : "---",
-        })
+          id: id,
+          p1_name: p1_name,
+          p2_name: p2_name,
+          p1: p1,
+          p2: p2,
+          p1_correct_count: p1_correct_count,
+          p2_correct_count: p2_correct_count,
+          p1_time_taken: p1_time_taken,
+          p2_time_taken: p2_time_taken,
+          slot_start: slot_start,
+          slot_end: slot_end,
+          is_walk_over: is_walk_over,
+          winner_id:
+            winner_id === p1 ? p1_name : winner_id === p2 ? p2_name : "---",
+        });
       }
     }
     // res.send(apiResponse(results));
-    res.send({ results: results, items: items});
+    res.send({ results: results, items: items });
   });
 });
 // PASS DYNAMIC DATA----------------------------->>>>>>>>>>>>
