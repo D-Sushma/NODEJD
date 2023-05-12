@@ -65,6 +65,23 @@ con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 });
+
+app.post('/insert/registration', function(req, res){
+  let userid = req.body.userid;
+  let subject = req.body.subject;
+  let subscription = req.body.subscription;
+  let status = req.body.status;
+  let updated_at = req.body.updated_at;
+  let created_at = req.body.created_at;
+  let expiry_date = req.body.expiry_date;
+  let query = `INSERT INTO competetion_registration(userid, subject, subscription, status, updated_at, created_at, expiry_date) VALUES ('${userid}', '${subject}', '${subscription}', '${status}', '${updated_at}', '${created_at}', '${expiry_date}')`
+con.query(query, (err, rows)=>{
+    if (err) throw err;
+    console.log((rows));
+    res.send(apiResponse(rows));
+  })
+});
+
 app.get("/usertabledetails", (req, res) => {
   // let sqlQuery = "SELECT * FROM employee";
   let sqlQuery = "SELECT * FROM quiz_regdetails";
