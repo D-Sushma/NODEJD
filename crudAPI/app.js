@@ -46,17 +46,31 @@ app.get('/single/item/:id', (req, res) => {
 });
 
 // /*** Create New Item *post* @return response() */
-// app.get('/insert/items',(req, res) => {
-//     // let data = {name: req.body.name, address: req.body.address};
+app.get('/insert/items',(req, res) => {
+    // let data = {name: req.body.name, address: req.body.address};
     
-//     // let sqlQuery = "INSERT INTO employee SET ?";
-//     let sqlQuery = "INSERT INTO dbuser (name, contact, subject) VALUES ('aarti','45236987563','DBMS')";
+    // let sqlQuery = "INSERT INTO employee SET ?";
+    let sqlQuery = "INSERT INTO dbuser (name, contact, subject) VALUES ('aarti','45236987563','DBMS')";
     
-//     let query = conn.query(sqlQuery, (err, results) => {
-//       if(err) throw err;
-//       res.send((results));
-//     });
-//   });
+    let query = conn.query(sqlQuery, (err, results) => {
+      if(err) throw err;
+      res.send((results));
+    });
+  });
+
+// ** INSERT by POST method
+app.post('/test', function (req, res) {
+     let  name = req.body.name;
+       let contact = req.body.contact;
+        let subject =  req.body.subject;
+    let sqlQuery = `INSERT INTO dbuser (name, contact, subject) VALUES ('${name}','${contact}','${subject}')`;
+    let query = conn.query(sqlQuery, (err, results) => {
+            if(err) throw err;
+            res.send((results));
+      });
+  });
+
+// ** NO WORK START
 app.post('/insert/new', function (req, res) {
   
   let sqlQuery = `INSERT INTO dbuser
@@ -75,24 +89,15 @@ app.post('/insert/new', function (req, res) {
           + rows.insertId);
   });
 });
-  app.post('/test', function (req, res) {
-     let  name = req.body.name;
-       let contact = req.body.contact;
-        let subject =  req.body.subject;
-    let sqlQuery = `INSERT INTO dbuser (name, contact, subject) VALUES ('${name}','${contact}','${subject}')`;
-    let query = conn.query(sqlQuery, (err, results) => {
-            if(err) throw err;
-            res.send((results));
-      });
-  });
-     
-  // app.post('/users',(req,res)=>{
+
+// app.post('/users',(req,res)=>{
   //   createPool.query('INSERT INTO users SET?', req.body,
   //   (err,res)=>{
   //     if(err) throw err;
   //     res.status(201).send(`User added with ID: ${res.insertId}`);
   //   });
   // });
+//** NO WORK END 
 
 //   /*** Update Item *put* @return response() */
 // app.get('/update/items/:id',(req, res) => {
