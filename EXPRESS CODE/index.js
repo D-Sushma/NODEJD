@@ -66,6 +66,26 @@ con.connect(function (err) {
   console.log("Connected!");
 });
 
+app.get('/login', function(req, res){
+  let query = "SELECT * FROM `quiz_login` where email='prabir.d06@gmail.com' and pass='Prabir@1986'";
+  let loginData = [];
+  con.query(query, (error, results)=>{
+    if(error) throw error;
+    // console.log(results);
+    else{
+      for (let index = 0; index < results.length; index++) {
+        const email = results[index].email;
+        const pass = results[index].pass;
+        loginData.push({
+          email: email,
+          pass: pass,
+        })
+        console.log('loginData', loginData)
+      }
+    }
+    res.send(apiResponse({results:results, loginData:loginData}));
+  })
+})
 app.post('/insert/registration', function(req, res){
   let userid = req.body.userid;
   let subject = req.body.subject;
