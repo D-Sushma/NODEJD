@@ -65,28 +65,41 @@ con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 });
-
-app.get('/login', function(req, res){
-  let query = "SELECT * FROM `quiz_login` where email='prabir.d06@gmail.com' and pass='Prabir@1986'";
-  let loginData = [];
-  con.query(query, (error, results)=>{
-    if(error) throw error;
-    // console.log(results);
-    else{
-      for (let index = 0; index < results.length; index++) {
-        const email = results[index].email;
-        const pass = results[index].pass;
-        loginData.push({
-          email: email,
-          pass: pass,
-        })
-        console.log('loginData', loginData)
-      }
-    }
-    res.send(apiResponse({results:results, loginData:loginData}));
-  })
-})
-app.post('/insert/registration', function(req, res){
+app.post("/login", function (req, res) {
+  let email = req.body.email;
+  let password = req.body.password;
+  console.log("req.body", req.body);
+  let query = `SELECT * FROM quiz_login where email='${email}' and pass='${password}'`;
+  console.log("email,password", email, password);
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    console.log(results);
+    res.send(apiResponse(results));
+  });
+});
+// app.get("/login", function (req, res) {
+//   let query =
+//     "SELECT * FROM `quiz_login` where email='prabir.d06@gmail.com' and pass='Prabir@1986'";
+//   let loginData = [];
+//   con.query(query, (error, results) => {
+//     if (error) throw error;
+//     // console.log(results);
+//     else {
+//       console.log(results);
+//       for (let index = 0; index < results.length; index++) {
+//         const email = results[index].email;
+//         const pass = results[index].pass;
+//         loginData.push({
+//           email: email,
+//           pass: pass,
+//         });
+//         console.log("loginData", loginData);
+//       }
+//     }
+//     res.send(apiResponse({ results: results, loginData: loginData }));
+//   });
+// });
+app.post("/insert/registration", function (req, res) {
   let userid = req.body.userid;
   let subject = req.body.subject;
   let subscription = req.body.subscription;
@@ -94,12 +107,12 @@ app.post('/insert/registration', function(req, res){
   let updated_at = req.body.updated_at;
   let created_at = req.body.created_at;
   let expiry_date = req.body.expiry_date;
-  let query = `INSERT INTO competetion_registration(userid, subject, subscription, status, updated_at, created_at, expiry_date) VALUES ('${userid}', '${subject}', '${subscription}', '${status}', '${updated_at}', '${created_at}', '${expiry_date}')`
-con.query(query, (err, rows)=>{
+  let query = `INSERT INTO competetion_registration(userid, subject, subscription, status, updated_at, created_at, expiry_date) VALUES ('${userid}', '${subject}', '${subscription}', '${status}', '${updated_at}', '${created_at}', '${expiry_date}')`;
+  con.query(query, (err, rows) => {
     if (err) throw err;
-    console.log((rows));
+    console.log(rows);
     res.send(apiResponse(rows));
-  })
+  });
 });
 
 app.get("/usertabledetails", (req, res) => {
