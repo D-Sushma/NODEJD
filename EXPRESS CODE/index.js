@@ -68,13 +68,20 @@ con.connect(function (err) {
 app.post("/login", function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
+
   console.log("req.body", req.body);
   let query = `SELECT * FROM quiz_login where email='${email}' and pass='${password}'`;
   console.log("email,password", email, password);
   con.query(query, (err, results) => {
     if (err) throw err;
-    console.log(results);
-    res.send(apiResponse(results));
+    // console.log(results);
+
+    if (results.length === 0) {
+      res.status(404).send(apiResponse("Not Found"));
+    } else {
+      res.send(apiResponse(results));
+    }
+    // res.send(apiResponse(results));
   });
 });
 // app.get("/login", function (req, res) {
