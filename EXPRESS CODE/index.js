@@ -65,17 +65,17 @@ con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 });
-app.post("/login", function (req, res) {
+
+// ---------------- *** START ADMIN ***   -----------------------------
+app.post("/admin/login", function (req, res) {
+  console.log("req.body",req.body);
   let email = req.body.email;
   let password = req.body.password;
-
-  console.log("req.body", req.body);
-  let query = `SELECT * FROM quiz_login where email='${email}' and pass='${password}'`;
-  console.log("email,password", email, password);
-  con.query(query, (err, results) => {
-    if (err) throw err;
+  let query =`SELECT * FROM q2s_admin where email='${email}' and password='${password}'`;
+  console.log('query', query)
+  con.query(query, (error, results) => {
+    if (error) throw error;
     // console.log(results);
-
     if (results.length === 0) {
       res.status(404).send(apiResponse("Not Found"));
     } else {
@@ -84,28 +84,33 @@ app.post("/login", function (req, res) {
     // res.send(apiResponse(results));
   });
 });
-// app.get("/login", function (req, res) {
-//   let query =
-//     "SELECT * FROM `quiz_login` where email='prabir.d06@gmail.com' and pass='Prabir@1986'";
-//   let loginData = [];
-//   con.query(query, (error, results) => {
-//     if (error) throw error;
-//     // console.log(results);
-//     else {
-//       console.log(results);
-//       for (let index = 0; index < results.length; index++) {
-//         const email = results[index].email;
-//         const pass = results[index].pass;
-//         loginData.push({
-//           email: email,
-//           pass: pass,
-//         });
-//         console.log("loginData", loginData);
-//       }
-//     }
-//     res.send(apiResponse({ results: results, loginData: loginData }));
-//   });
-// });
+app.get("/admin/login", function (req, res) {
+  let query =
+    "SELECT * FROM q2s_admin where email='admin@smartscoreanalytics.com' and password='smartscore321#'";
+  con.query(query, (error, results) => {
+    if (error) throw error;
+    console.log(results);
+    res.send(apiResponse(results));
+  });
+});
+app.post("/login", function (req, res) {
+  let email = req.body.email;
+  let password = req.body.password;
+  console.log("req.body", req.body);
+  let query = `SELECT * FROM quiz_login where email='${email}' and pass='${password}'`;
+  console.log("email,password", email, password);
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    // console.log(results);
+    if (results.length === 0) {
+      res.status(404).send(apiResponse("Not Found"));
+    } else {
+      res.send(apiResponse(results));
+    }
+    // res.send(apiResponse(results));
+  });
+});
+// ---------------- *** END ADMIN ***   -----------------------------
 app.post("/insert/registration", function (req, res) {
   let userid = req.body.userid;
   let subject = req.body.subject;
