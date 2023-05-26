@@ -68,10 +68,10 @@ con.connect(function (err) {
 
 // ---------------- *** START ADMIN ***   -----------------------------
 app.post("/admin/login", function (req, res) {
-  console.log("req.body",req.body);
+  console.log("req.body", req.body);
   let email = req.body.email;
   let password = req.body.password;
-  let query =`SELECT * FROM q2s_admin where email='${email}' and password='${password}'`;
+  let query = `SELECT * FROM q2s_admin where email='${email}' and password='${password}'`;
   console.log('query', query)
   con.query(query, (error, results) => {
     if (error) throw error;
@@ -526,7 +526,7 @@ app.get("/totalrecord", (req, res) => {
     res.send(apiResponse(results));
   });
 });
-app.get("/current-week-active-user", (req,res)=>{
+app.get("/current-week-active-user", (req, res) => {
   let current = moment();
   let today = current.format('YYYY-MM-DD');
   let sunday = current.weekday(7);
@@ -535,36 +535,36 @@ app.get("/current-week-active-user", (req,res)=>{
   // let query = `SELECT * FROM competetion_registration WHERE status = 1 AND expiry_date = '${comingSunday}' `;
   let query = `SELECT c.*, CONCAT(q.name,' ',q.lname) AS full_name from (SELECT * FROM competetion_registration WHERE status = 1 AND expiry_date = '${comingSunday}') AS c INNER JOIN quiz_regdetails q ON c.userid = q.id`;
   let items = [];
-  con.query(query,(err,results)=>{
-    if(err) throw err;
-    else{
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    else {
       // console.log(results);
-for (let i = 0; i < results.length; i++) {
-  const id = results[i].id;
-  const userid = results[i].userid;
-  const subject = results[i].subject;
-  const subscription = results[i].subscription;
-  const status = results[i].status;
-  const created_at = results[i].created_at;
-  const updated_at = results[i].updated_at;
-  const expiry_date = results[i].expiry_date;
-  const full_name =  results[i].full_name;
-  items.push({
-    id:id, userid:userid,
-    full_name: full_name,
-    subject: (subject === 13) ? "GK" : "English",
-    subscription : (subscription ===1 ) ? "Weekly" : "---",
-    status : (status === 1) ? "Active" : "Inactive",
-    created_at : moment(created_at).format('DD/MM/YYYY'),
-    updated_at : moment(updated_at).format('DD/MM/YYYY'),
-    expiry_date : moment(expiry_date).format('DD/MM/YYYY'),
-  })
-}
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const userid = results[i].userid;
+        const subject = results[i].subject;
+        const subscription = results[i].subscription;
+        const status = results[i].status;
+        const created_at = results[i].created_at;
+        const updated_at = results[i].updated_at;
+        const expiry_date = results[i].expiry_date;
+        const full_name = results[i].full_name;
+        items.push({
+          id: id, userid: userid,
+          full_name: full_name,
+          subject: (subject === 13) ? "GK" : "English",
+          subscription: (subscription === 1) ? "Weekly" : "---",
+          status: (status === 1) ? "Active" : "Inactive",
+          created_at: moment(created_at).format('DD/MM/YYYY'),
+          updated_at: moment(updated_at).format('DD/MM/YYYY'),
+          expiry_date: moment(expiry_date).format('DD/MM/YYYY'),
+        })
+      }
     }
-    res.send(apiResponse({results:results, items: items}));
+    res.send(apiResponse({ results: results, items: items }));
   });
 })
-app.get("/current-week-registration", (req,res)=>{
+app.get("/current-week-registration", (req, res) => {
   const current = moment();
   let today = current.format('YYYY-MM-DD');
   let sunday = current.weekday(7);
@@ -573,35 +573,70 @@ app.get("/current-week-registration", (req,res)=>{
   // let query = `SELECT * FROM competetion_registration WHERE expiry_date = '${comingSunday}'`;
   let query = `SELECT c.*, CONCAT(q.name,' ',q.lname) AS full_name from (SELECT * FROM competetion_registration WHERE expiry_date = '${comingSunday}') AS c INNER JOIN quiz_regdetails q ON c.userid = q.id`;
   let items = [];
-  con.query(query, (err,results)=>{
-    if(err) throw err;
-    else{
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    else {
       // console.log(results);
-for (let i = 0; i < results.length; i++) {
-  const id = results[i].id;
-  const userid = results[i].userid;
-  const subject = results[i].subject;
-  const subscription = results[i].subscription;
-  const status = results[i].status;
-  const created_at = results[i].created_at;
-  const updated_at = results[i].updated_at;
-  const expiry_date = results[i].expiry_date;
-  const full_name =  results[i].full_name;
-  items.push({
-    id:id, userid:userid,
-    full_name: full_name,
-    subject: (subject === 13) ? "GK" : "English",
-    subscription : (subscription ===1 ) ? "Weekly" : "---",
-    status : (status === 1) ? "Active" : "Inactive",
-    created_at : moment(created_at).format('DD/MM/YYYY'),
-    updated_at : moment(updated_at).format('DD/MM/YYYY'),
-    expiry_date : moment(expiry_date).format('DD/MM/YYYY'),
-  })
-}
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const userid = results[i].userid;
+        const subject = results[i].subject;
+        const subscription = results[i].subscription;
+        const status = results[i].status;
+        const created_at = results[i].created_at;
+        const updated_at = results[i].updated_at;
+        const expiry_date = results[i].expiry_date;
+        const full_name = results[i].full_name;
+        items.push({
+          id: id, userid: userid,
+          full_name: full_name,
+          subject: (subject === 13) ? "GK" : "English",
+          subscription: (subscription === 1) ? "Weekly" : "---",
+          status: (status === 1) ? "Active" : "Inactive",
+          created_at: moment(created_at).format('DD/MM/YYYY'),
+          updated_at: moment(updated_at).format('DD/MM/YYYY'),
+          expiry_date: moment(expiry_date).format('DD/MM/YYYY'),
+        })
+      }
     }
-    res.send(apiResponse({results:results, items: items}));
+    res.send(apiResponse({ results: results, items: items }));
   })
 })
+app.get("/current-week-competetion", (req, res) => {
+  const current = moment();
+  let today = current.format('YYYY-MM-DD');
+  console.log(today)
+  // let query = `SELECT * FROM competition_new_initiate WHERE test_date = '2023-05-26' AND is_completed = 0`;
+  let query =
+    `SELECT c.*, CONCAT(q1.name,' ',q1.lname) AS p1_name, CONCAT(q2.name,' ',q2.lname) AS p2_name from (SELECT * FROM competition_new_initiate WHERE test_date = '${today}' AND is_completed = 0) c INNER JOIN quiz_regdetails q1 ON c.p1 = q1.id INNER JOIN quiz_regdetails q2 ON c.p2 = q2.id`
+  let items = [];
+  con.query(query, (err, results) => {
+    if (err) throw err;
+    else {
+      // console.log(results);
+      for (let i = 0; i < results.length; i++) {
+        const id = results[i].id;
+        const competition_group_id = results[i].competition_group_id;
+        const subject_id = results[i].subject_id;
+        const p1_name = results[i].p1_name;
+        const p2_name = results[i].p2_name;
+        const test_date = results[i].test_date;
+        const subscription_id = results[i].subscription_id;
+        const slot_start = results[i].slot_start;
+        const slot_end = results[i].slot_end;
+        items.push({
+          id: id, competition_group_id: competition_group_id,
+          subject_id: (subject_id === 13) ? "GK" : "English",
+          p1_name: p1_name, p2_name: p2_name,
+          test_date: moment(test_date).format('DD/MM/YYYY'),
+          subscription_id: (subscription_id === 1) ? "Weekly" : "---",
+          slot_start: slot_start, slot_end: slot_end,
+        })
+      }
+    }
+    res.send(apiResponse({results:results, items: items}));
+  });
+});
 /**************************************************************/
 // some query for filter section, --> for total reg field
 // SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
