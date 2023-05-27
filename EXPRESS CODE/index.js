@@ -634,9 +634,69 @@ app.get("/current-week-competetion", (req, res) => {
         })
       }
     }
-    res.send(apiResponse({results:results, items: items}));
+    res.send(apiResponse({ results: results, items: items }));
   });
 });
+// app.get("/leaderboard", (req, res) => {
+//   const currentDate = moment();
+//   // const mon = currentDate.day(1);
+//   const mon = currentDate.weekday(5);
+//   const monday = moment(mon).format("YYYY-MM-DD")
+//   console.log('monday', monday)
+//   const dates = [];
+//   for (let i = 0; i < 7; i++) {
+//     dates.push(currentDate.format('YYYY-MM-DD'));
+//     currentDate.add(1, 'day');
+//   }
+//   console.log('dates', dates)
+//   let query = `SELECT c.* FROM (SELECT * FROM competition_new_initiate WHERE test_date  = '2023-05-26' AND is_completed = 1) c`;
+//   let items = [];
+//   let resultArray = [];
+//   con.query(query, (err, results) => {
+//     if (err) throw err;
+//     else {
+//       // console.log(results);
+//       for (let i = 0; i < results.length; i++) {
+//         const id = results[i].id;
+//         const p1 = results[i].p1;
+//         const p2 = results[i].p2;
+//         const test_date = results[i].test_date;
+//         const p1_correct_count = results[i].p1_correct_count;
+//         const p2_correct_count = results[i].p2_correct_count;
+//         const p1_time_taken = results[i].p1_time_taken;
+//         const p2_time_taken = results[i].p2_time_taken;
+//         const winner_id = results[i].winner_id;
+//         const is_completed = results[i].is_completed;
+
+//         items.push({
+//           id: id, p1: p1, p2: p2, test_date: moment(test_date).format("DD-MM-YYYY"),
+//           winner_id: winner_id, is_completed: is_completed, p1_correct_count: p1_correct_count,
+//           p2_correct_count: p2_correct_count, p1_time_taken: p1_time_taken, p2_time_taken: p2_time_taken,
+//         })
+//       }
+
+//       for (let i = 0; i < items.length; i++) {
+//         if (p1_correct_count > p2_correct_count) {
+//           resultArray.push({ p1 })
+//         }
+//         else if (p1_correct_count < p2_correct_count) {
+//           resultArray.push({ p2 })
+//         }
+//         else if (p1_correct_count === p2_correct_count) {
+//           if (p1_time_taken > p2_time_taken) {
+//             resultArray.push({ p2 })
+//           }
+//           else {
+//             resultArray.push({ p1 })
+//           }
+//         }
+//         else return 0;
+//       }
+      
+//       res.send(apiResponse(({ results: results, items: items, resultArray:resultArray })));
+//     }
+//   })
+// })
 /**************************************************************/
 // some query for filter section, --> for total reg field
 // SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
