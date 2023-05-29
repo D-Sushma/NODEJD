@@ -637,6 +637,27 @@ app.get("/current-week-competetion", (req, res) => {
     res.send(apiResponse({ results: results, items: items }));
   });
 });
+app.post("/leaderboard", (req, res)=>{
+  const today = req.body.today;
+  console.log('today', today)
+    // const currentDate = moment();
+  // const mon = currentDate.day(6); // Saturday
+  // const mon = currentDate.weekday(1); 
+  // const monday = moment(mon).format("YYYY-MM-DD")
+  // console.log('monday', monday)
+  // const dates = [];
+  // for (let i = 0; i < 7; i++) {
+  //   dates.push(currentDate.format('YYYY-MM-DD'));
+  //   currentDate.add(1, 'day');
+  // }
+  // console.log('dates', dates)
+  let query = `SELECT *,CASE WHEN p1_correct_count > p2_correct_count THEN p1_correct_count ELSE p2_correct_count END AS score FROM competition_new_initiate WHERE test_date='${today}' AND is_completed = 1`;
+  con.query(query, (err,results)=>{
+    if(err) throw err;
+    console.log(results)
+    res.send(apiResponse(results));
+  })
+})
 // app.get("/leaderboard", (req, res) => {
 //   const currentDate = moment();
 //   // const mon = currentDate.day(1);
