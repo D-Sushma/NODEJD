@@ -639,6 +639,7 @@ app.get("/current-week-competetion", (req, res) => {
 });
 app.post("/leaderboard", (req, res)=>{
   const today = req.body.today;
+  const subId = req.body.subId;
   console.log('today', today)
     // const currentDate = moment();
   // const mon = currentDate.day(6); // Saturday
@@ -651,7 +652,8 @@ app.post("/leaderboard", (req, res)=>{
   //   currentDate.add(1, 'day');
   // }
   // console.log('dates', dates)
-  let query = `SELECT *,CASE WHEN p1_correct_count > p2_correct_count THEN p1_correct_count ELSE p2_correct_count END AS score FROM competition_new_initiate WHERE test_date='${today}' AND is_completed = 1`;
+  let query = `SELECT *,CASE WHEN p1_correct_count > p2_correct_count THEN p1_correct_count ELSE p2_correct_count END AS score FROM competition_new_initiate WHERE test_date='${today}' AND is_completed = 1 AND subject_id ='${subId}'`;
+  console.log(query)
   con.query(query, (err,results)=>{
     if(err) throw err;
     console.log(results)
