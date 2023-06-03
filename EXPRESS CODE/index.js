@@ -720,6 +720,55 @@ app.post("/leaderboard", (req, res)=>{
 //     }
 //   })
 // })
+
+app.get("/receive-subject-id", (req,res)=>{
+  let query = "SELECT * FROM `project_catt` WHERE UNDER = 0";
+  con.query(query, (err, results)=>{
+    if (err) throw err;
+    console.log(results);
+    res.send(apiResponse(results));
+  });
+});
+app.get("/receive-id-details", (req,res)=>{
+  let query = "SELECT * FROM project_catt where id in (SELECT id from project_catt where under = 13)";
+  const idArray = [];
+  const finalObj = {};
+  con.query(query, (err, results)=>{
+    if (err) throw err;
+    console.log(results.length);
+    for (let i = 0; i < results.length; i++) {
+      const idElement = results[i].id;
+      const under = results[i].UNDER;
+      idArray.push({
+        idElement: idElement, under: under
+      })
+    }
+    // for(let i = 0; i < idArray.length; i++ ) {
+    //   Object.assign(finalObj, idArray[i]);
+    // }
+    const topicArray = idArray.map((obj)=>{
+      return obj.idElement;
+    })
+
+    const query2 = `SELECT id,name from project_catt where under IN (${topicArray})`;
+    con.query(query2, (err, results2)=>{
+      if(err) throw err;
+      console.log(results2.length);
+
+      const subTopicArray = results2.map((obj)=>{
+        return obj.id;
+      })
+      // console.log(subTopicArray)
+
+      const query3 = `SELECT id,name from project_catt where under IN (${subTopicArray})`;
+      con.query(query3, (err, results3)=>{
+        if(err) throw err;
+        console.log(results3.length)
+        res.send(apiResponse({results:results,  results2:results2, results3: results3}));
+      })
+    })
+  });
+});
 /**************************************************************/
 // some query for filter section, --> for total reg field
 // SELECT * FROM `competetion_registration` WHERE subject=6 AND expiry_date='2022-10-02'
