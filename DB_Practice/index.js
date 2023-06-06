@@ -22,17 +22,26 @@ app.post('/', (req, res) => {
     // console.log(req.body);
     // f. get fName, lName, gender , here i get data
     var name = req.body.name;
-    var email = req.body.email;
+    var subject = req.body.subject;
     var mno = req.body.mno;
     // g. insert data into table registration ---> use connection import con and connect here
     con.connect(function (err) {
         if (err) throw err;
         // .......................................
-        // var sql = "INSERT INTO students (name, email, mno) VALUES('" + name + "','" + email + "','" + mno + "')";
-        // var sql = "SELECT * from students ";
-        con.query(sql, function (err, res) {
+        // ** 1st way
+        // var sql = "INSERT INTO dbuser (name, subject, contact) VALUES('" + name + "','" + subject + "','" + mno + "')";
+         // ** 2nd way
+        var sql = "INSERT INTO dbuser (name, subject, contact) VALUES(?,?,?)";
+         // ** 3rd way
+        var sql = "INSERT INTO dbuser (name, subject, contact) VALUES ?";
+        var values = [
+            [name,subject,mno]
+        ]
+        // con.query(sql, function (err, results) {
+        // con.query(sql,[name,subject,mno], function (err, results) {
+        con.query(sql,[values], function (err, results) {
             if (err) throw err;
-            res.send('Student register success-full' + res.insertId);
+            res.send('Student register success-full' + results.insertId);
         //    console.log('Student register success-full' + res);
         })
     })
