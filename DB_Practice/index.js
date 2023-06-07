@@ -12,6 +12,9 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// ** ejs A
+app.set('view engine', 'ejs');
+
 // a. form load on this url........
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/form.html')
@@ -43,6 +46,19 @@ app.post('/', (req, res) => {
             if (err) throw err;
             res.send('Student register success-full' + results.insertId);
         //    console.log('Student register success-full' + res);
+        })
+    })
+})
+
+// SELECT DATA FROM MYSQL
+app.get('/dbuser', (req,res)=>{
+    con.connect(function(err){
+        if(err) throw err;
+        var sql = "SELECT * FROM dbuser";
+        con.query(sql, function(err,results){
+            if(err) throw err;
+            console.log(results)
+            res.render(__dirname+ '/dbuser',{dbuser:results});
         })
     })
 })

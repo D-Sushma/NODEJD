@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>DB user list from mydb database</title>
+</head>
+
+<body>
+    <h1>Db user list</h1>
+    <table border="1" width="100%">
+        <tr>
+            <th>S.No.</th>
+            <th>Name</th>
+            <th>Subject</th>
+            <th>Contact</th>
+        </tr>
+
+        <% if(dbuser.lenght > 0){ %>
+            <% for(var i=0; i<dbuser.lenght; i++){ %>
+                <tr>
+                    <td><%- dbuser[i].id %></td>
+                    <td><%- dbuser[i].name %></td>
+                    <td><%- dbuser[i].subject %></td>
+                    <td><%- dbuser[i].mno %></td>
+                </tr>
+                <% } %>
+
+            <% }else{ %>
+                <h1> Db user not found!</h1>
+                <% } %>
+    </table>
+</body>
+
+</html>
