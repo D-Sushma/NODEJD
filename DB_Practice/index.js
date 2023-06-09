@@ -9,8 +9,8 @@ const port = 7000
 var bodyParser = require('body-parser');
 
 // d. encode url
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // ** ejs A
 app.set('view engine', 'ejs');
